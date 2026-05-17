@@ -5,6 +5,20 @@ import { COUNTRY_NAMES } from '../data/countryNames'
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 
+// Fallback coordinates for countries where geoCentroid may fail [lon, lat]
+const FALLBACK_COORDS = {
+  4: [67, 34],      // Afghanistan
+  12: [3, 28],      // Algeria
+  76: [-51, -10],   // Brazil
+  364: [53, 32],    // Iran
+  586: [69, 30],    // Pakistan
+  729: [30, 15],    // Sudan
+  818: [31, 26],    // Egypt
+  840: [-95, 45],   // USA
+  156: [105, 35],   // China
+  643: [100, 60],   // Russia
+}
+
 function getCountryColor(count, isNew) {
   if (count === 0) return '#1e2a3a'
   if (isNew) return '#ff1744'
@@ -96,15 +110,22 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                 {/* Layer 2: name labels */}
                 {geographies.map((geo) => {
                   const id = String(geo.id)
+                  const data = countryData[id]
                   const isHovered = hoveredGeoId === id
                   const name = COUNTRY_NAMES[geo.id]
                   if (!name) return null
 
-                  // Show label if: hovered (any zoom) OR zoom >= 3
-                  if (!isHovered && zoom < 3) return null
+                  // Show label if: has incidents (any zoom) OR hovered (any zoom) OR zoom >= 3
+                  if (!data && !isHovered && zoom < 3) return null
+
+                  // Get coordinates: try geoCentroid, fall back to hardcoded
+                  let coords = geoCentroid(geo)
+                  if (!coords || !Array.isArray(coords) || coords.some(isNaN)) {
+                    coords = FALLBACK_COORDS[geo.id] || [0, 0]
+                  }
 
                   return (
-                    <Marker key={`lbl-${geo.id}`} coordinates={geoCentroid(geo)}>
+                    <Marker key={`lbl-${geo.id}`} coordinates={coords}>
                       <text
                         textAnchor="middle"
                         dominantBaseline="middle"
