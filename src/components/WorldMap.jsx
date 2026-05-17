@@ -119,24 +119,30 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
 
   useEffect(() => {
     const handleMapClick = (e) => {
-      // Check if click is on a country geometry (path element inside a g with title)
+      // Check if click target is a country path/polygon element
       let target = e.target
-      let isCountry = false
+      let isCountryClick = false
 
-      // Traverse up the DOM to see if we're inside a country group
+      // Walk up the tree to see if we're inside a country geometry
       while (target && target !== mapWrapperRef.current) {
-        if (target.tagName === 'g') {
-          const title = target.querySelector('title')
-          if (title && title.textContent) {
-            isCountry = true
-            break
+        // Country geometries are path elements inside g tags
+        if (target.tagName === 'path') {
+          // Check if this path is inside a g with a title (country group)
+          let parent = target.parentElement
+          while (parent && parent !== mapWrapperRef.current) {
+            if (parent.tagName === 'g' && parent.querySelector('title')) {
+              isCountryClick = true
+              break
+            }
+            parent = parent.parentElement
           }
+          break
         }
         target = target.parentElement
       }
 
-      // Only close panel if click is not on a country
-      if (!isCountry) {
+      // Close panel if click is NOT on a country
+      if (!isCountryClick) {
         onCountryClick(null)
       }
     }
