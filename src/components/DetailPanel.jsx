@@ -3,6 +3,37 @@ export default function DetailPanel({ country, onClose }) {
 
   const isUrl = (str) => /^https?:\/\//.test(str)
 
+  const citationUrl = (citation) => {
+    // Map known sources to URLs
+    const urlMap = {
+      'UN Panel of Experts': 'https://www.un.org/securitycouncil/sanctions/yemen/',
+      'Amnesty International': 'https://www.amnesty.org/',
+      'Human Rights Watch': 'https://www.hrw.org/',
+      'UN Human Rights Council': 'https://www.ohchr.org/en',
+      'BBC News': 'https://www.bbc.com/news',
+      'The Guardian': 'https://www.theguardian.com',
+      'The Intercept': 'https://theintercept.com',
+      'AP News': 'https://apnews.com',
+      'Reuters': 'https://www.reuters.com',
+      'NPR': 'https://www.npr.org',
+      'NY Times': 'https://www.nytimes.com',
+      'Washington Post': 'https://www.washingtonpost.com',
+      'CEPR': 'https://cepr.net',
+      'The Economist': 'https://www.economist.com'
+    }
+
+    // If citation starts with http, return as-is
+    if (isUrl(citation)) return citation
+
+    // Try to match known sources
+    for (const [source, url] of Object.entries(urlMap)) {
+      if (citation.toLowerCase().includes(source.toLowerCase())) {
+        return url
+      }
+    }
+    return null
+  }
+
   return (
     <div className="detail-panel">
       <div className="dp-header">
@@ -44,15 +75,18 @@ export default function DetailPanel({ country, onClose }) {
                 </ul>
 
                 <div className="dp-citations">
-                  {inc.citations.map((c, j) => (
-                    <div key={j} className="citation">
-                      {isUrl(c) ? (
-                        <a href={c} target="_blank" rel="noopener noreferrer">{c}</a>
-                      ) : (
-                        <span>{c}</span>
-                      )}
-                    </div>
-                  ))}
+                  {inc.citations.map((c, j) => {
+                    const url = citationUrl(c)
+                    return (
+                      <div key={j} className="citation">
+                        {url ? (
+                          <a href={url} target="_blank" rel="noopener noreferrer">{c}</a>
+                        ) : (
+                          <span>{c}</span>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               </div>
             </div>

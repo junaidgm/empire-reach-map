@@ -61,7 +61,12 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                         onCountryLeave()
                       }}
                       onClick={() => {
-                        if (data) onCountryClick(data)
+                        if (data) {
+                          onCountryClick(data)
+                        } else {
+                          // Click on grey country or ocean closes detail panel
+                          onCountryClick(null)
+                        }
                       }}
                       style={{
                         default: {
@@ -89,19 +94,21 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                 {geographies.map((geo) => {
                   const id = String(geo.id)
                   const isHovered = hoveredGeoId === id
-                  if (!isHovered && zoom < 3) return null
                   const name = COUNTRY_NAMES[geo.id]
                   if (!name) return null
+
+                  // Show label if: hovered (any zoom) OR zoom >= 3
+                  if (!isHovered && zoom < 3) return null
 
                   return (
                     <Marker key={`lbl-${geo.id}`} coordinates={geoCentroid(geo)}>
                       <text
                         textAnchor="middle"
                         dominantBaseline="middle"
-                        fontSize={Math.max(1.8, 7 / zoom)}
+                        fontSize={isHovered ? Math.max(2.2, 9 / zoom) : Math.max(1.5, 6 / zoom)}
                         fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-                        fontWeight={isHovered ? '700' : '400'}
-                        fill={isHovered ? '#ffffff' : 'rgba(180,210,235,0.38)'}
+                        fontWeight={isHovered ? '700' : zoom >= 3 ? '500' : '400'}
+                        fill={isHovered ? '#ffffff' : zoom >= 3 ? 'rgba(200,220,240,0.6)' : 'rgba(180,210,235,0.38)'}
                         style={{ pointerEvents: 'none', userSelect: 'none' }}
                       >
                         {name}

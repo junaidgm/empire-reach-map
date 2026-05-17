@@ -112,6 +112,7 @@ export default function App() {
   const handleCountryClick = useCallback((data) => {
     setDetailCountry(data)
     setHoveredCountry(null)
+    // null closes the panel
   }, [])
 
   const handleFlagToggle = useCallback((key) => {
