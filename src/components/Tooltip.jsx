@@ -6,7 +6,7 @@ export default function Tooltip({ country, position }) {
 
   useEffect(() => {
     const pad = 12
-    const w = 280
+    const w = 320
     const h = 160
     let x = position.x + 14
     let y = position.y - 10
@@ -18,34 +18,36 @@ export default function Tooltip({ country, position }) {
 
   if (!country) return null
 
-  const extractAct = (title, summary) => {
-    // Extract a concise description of the act (1-2 sentences max, ~60 chars)
-    if (title.includes(' — ')) {
-      const action = title.split(' — ')[1]
-      return action.length > 70 ? action.slice(0, 67) + '…' : action
-    }
-    // Fallback to first sentence of summary
-    const firstSentence = summary.split(/[.!?]+/)[0]
-    if (firstSentence.length > 100) return firstSentence.slice(0, 97) + '…'
-    return firstSentence
-  }
+  const generateSummary = (incident) => {
+    // Create a single coherent sentence from the title and summary
+    const { title, summary, perpetrators } = incident
 
-  const extractReason = (summary) => {
-    // Extract motivation/reason from summary (look for keywords like "for", "to", "because")
-    const reasonPatterns = [
-      /for (?:control of |access to |strategic |economic )?([^.]{20,60})/i,
-      /to (?:prevent |support |install |remove |block )([^.]{15,50})/i,
-      /because (?:of |the )([^.]{20,60})/i
-    ]
-    for (const pattern of reasonPatterns) {
-      const match = summary.match(pattern)
-      if (match) return match[1].trim()
+    // Start with the title as the main action
+    let mainAction = title
+    if (title.includes(' — ')) {
+      mainAction = title.split(' — ')[1]
     }
-    // Fallback: look for oil, resources, strategic, communist, etc.
-    if (/oil|gas|mineral|resource|strategic|communist|authoritarian|democratic/i.test(summary)) {
-      return 'Strategic/economic interests'
+
+    // Get first sentence of summary for context
+    const firstSentence = summary.split(/[.!?]+/)[0].trim()
+
+    // Combine into one complete sentence
+    // Try to synthesize a natural, complete explanation
+    const perpsText = perpetrators.length > 0 ? perpetrators[0] : 'Foreign powers'
+
+    // Create variations based on keywords in the title/summary
+    if (title.includes('Coup') || title.includes('overthrow')) {
+      return `${perpsText} orchestrated a coup to ${mainAction.toLowerCase()}.`
+    } else if (title.includes('Assassi') || title.includes('killed') || title.includes('murder')) {
+      return `${perpsText} assassinated key leadership to ${mainAction.toLowerCase()}.`
+    } else if (title.includes('Invasion') || title.includes('Intervention')) {
+      return `${perpsText} intervened militarily to ${mainAction.toLowerCase()}.`
+    } else if (title.includes('Campaign')) {
+      return `${perpsText} launched a campaign to ${mainAction.toLowerCase()}.`
+    } else {
+      // Generic fallback - use first sentence and complement with action
+      return `${perpsText} carried out ${mainAction.toLowerCase()}.`
     }
-    return null
   }
 
   return (
@@ -55,8 +57,7 @@ export default function Tooltip({ country, position }) {
         {country.incidents.map((inc, i) => {
           const perps = parsePerpetrators(inc.perpetrators)
           const flags = perps.map(k => PERP_META[k]?.flag).filter(Boolean).join('')
-          const act = extractAct(inc.title, inc.summary)
-          const reason = extractReason(inc.summary)
+          const summary = generateSummary(inc)
           return (
             <div key={i} className="th-card">
               <div className="th-card-header">
@@ -64,8 +65,7 @@ export default function Tooltip({ country, position }) {
                 <span className="th-card-flags">{flags}</span>
               </div>
               <div className="th-card-body">
-                <div className="th-card-act">{act}</div>
-                {reason && <div className="th-card-reason">💡 {reason}</div>}
+                <div className="th-card-summary">{summary}</div>
               </div>
             </div>
           )

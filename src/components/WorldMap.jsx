@@ -136,6 +136,7 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
           minZoom={1}
           maxZoom={8}
         >
+          <rect x="-180" y="-90" width="360" height="180" fill="transparent" onClick={() => onCountryClick(null)} />
           <Geographies geography={GEO_URL}>
             {({ geographies }) => (
               <>
@@ -158,7 +159,8 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                     setHoveredGeoId(null)
                     onCountryLeave()
                   }
-                  const handleClick = () => {
+                  const handleClick = (e) => {
+                    e.stopPropagation()
                     if (data) {
                       onCountryClick(data)
                     } else {
