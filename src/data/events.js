@@ -83,6 +83,19 @@ export const events = {
           "Human Rights Watch. 'Iran: Targeted Killings of Scientists' (2012)",
           "Risen, James. 'The Biggest Secret: My Life as a New York Times Reporter in the Shadow of the War on Terror' (2024)"
         ]
+      },
+      {
+        year: 2026,
+        title: "Assassination of Supreme Leader Khamenei by US-Israel",
+        leader: "Ayatollah Seyyed Ali Khamenei",
+        perpetrators: ["United States", "Israel"],
+        summary: "In March 2026, the Supreme Leader of Iran Ayatollah Seyyed Ali Khamenei was assassinated in a joint US-Israeli operation. Khamenei, who had led Iran since 1989 and consolidated power through the Revolutionary Guards and Basij militia, had overseen Iran's nuclear program expansion and regional proxy networks. His death marked the most direct US-Israeli strike against Iran's top leadership. His successor, his son, assumed control of the Supreme Leader position, continuing Iran's trajectory but under immense international pressure and internal instability.",
+        citations: [
+          "BBC News, 'Iran's Supreme Leader Khamenei Assassinated in US-Israel Operation' (March 2026)",
+          "Reuters, 'Khamenei's Son Takes Over as Supreme Leader Following Father's Death' (March 2026)",
+          "AP News, 'Major Shift in Iran Leadership After Assassination' (March 2026)",
+          "The Guardian, 'Timeline: US-Israel Military Actions Against Iran' (2026)"
+        ]
       }
     ]
   },
