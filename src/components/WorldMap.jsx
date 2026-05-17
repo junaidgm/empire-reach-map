@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import { ComposableMap, Geographies, Geography, ZoomableGroup, Marker } from 'react-simple-maps'
 import { geoCentroid } from 'd3-geo'
 import { COUNTRY_NAMES } from '../data/countryNames'
@@ -115,6 +115,22 @@ function getCountryColor(count, isNew) {
 export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCountryLeave, onCountryClick }) {
   const [position, setPosition] = useState({ coordinates: [0, 20], zoom: 1 })
   const [hoveredGeoId, setHoveredGeoId] = useState(null)
+  const mapWrapperRef = useRef(null)
+
+  useEffect(() => {
+    const handleMapClick = (e) => {
+      // Close panel on click to map background (not on geography elements)
+      if (e.target.tagName === 'svg' || e.target.tagName === 'g' && !e.target.querySelector('path')) {
+        onCountryClick(null)
+      }
+    }
+
+    const mapEl = mapWrapperRef.current
+    if (mapEl) {
+      mapEl.addEventListener('click', handleMapClick, true)
+      return () => mapEl.removeEventListener('click', handleMapClick, true)
+    }
+  }, [onCountryClick])
 
   const handleMove = useCallback((pos) => {
     if (pos.zoom >= 1) setPosition(pos)
@@ -122,14 +138,8 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
 
   const { zoom } = position
 
-  const handleMapClick = (e) => {
-    // Close detail panel on click anywhere in the map wrapper
-    // Country clicks call stopPropagation to prevent this from firing
-    onCountryClick(null)
-  }
-
   return (
-    <div className="map-wrapper" onClick={handleMapClick}>
+    <div className="map-wrapper" ref={mapWrapperRef}>
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{ scale: 140, center: [0, 20] }}
