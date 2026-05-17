@@ -2,7 +2,9 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import WorldMap from './components/WorldMap'
 import Tooltip from './components/Tooltip'
 import Timeline from './components/Timeline'
+import PerpFlags from './components/PerpFlags'
 import { events } from './data/events'
+import { computePerpCounts } from './utils/perpetrators'
 import './App.css'
 
 const MIN_YEAR = 1830
@@ -24,14 +26,16 @@ export default function App() {
     const result = {}
     Object.entries(events).forEach(([id, data]) => {
       const visible = data.incidents.filter(i => i.year <= cutoff)
-      if (visible.length > 0) {
-        result[id] = { ...data, incidents: visible }
-      }
+      if (visible.length > 0) result[id] = { ...data, incidents: visible }
     })
     return result
   }, [viewMode, animationYear])
 
-  // Track newly-appearing countries to flash them
+  const perpCounts = useMemo(() => computePerpCounts(countryData), [countryData])
+  const perpNations = Object.keys(perpCounts).length
+  const totalIncidents = Object.values(countryData).reduce((n, d) => n + d.incidents.length, 0)
+
+  // Flash newly-appearing countries during timeline
   useEffect(() => {
     if (viewMode !== 'timeline') return
     const prev = prevYearRef.current
@@ -49,16 +53,10 @@ export default function App() {
   }, [animationYear, viewMode])
 
   useEffect(() => {
-    if (!isPlaying) {
-      clearInterval(intervalRef.current)
-      return
-    }
+    if (!isPlaying) { clearInterval(intervalRef.current); return }
     intervalRef.current = setInterval(() => {
       setAnimationYear(prev => {
-        if (prev >= MAX_YEAR) {
-          setIsPlaying(false)
-          return MAX_YEAR
-        }
+        if (prev >= MAX_YEAR) { setIsPlaying(false); return MAX_YEAR }
         return prev + 1
       })
     }, Math.round(120 / speed))
@@ -78,34 +76,17 @@ export default function App() {
   }, [viewMode, animationYear])
 
   const handlePause = useCallback(() => setIsPlaying(false), [])
-
   const handleReset = useCallback(() => {
-    setIsPlaying(false)
-    setAnimationYear(MIN_YEAR)
-    prevYearRef.current = MIN_YEAR
+    setIsPlaying(false); setAnimationYear(MIN_YEAR); prevYearRef.current = MIN_YEAR
   }, [])
-
-  const handleShowAll = useCallback(() => {
-    setIsPlaying(false)
-    setViewMode('all')
-  }, [])
-
+  const handleShowAll = useCallback(() => { setIsPlaying(false); setViewMode('all') }, [])
   const handleYearChange = useCallback((year) => {
-    prevYearRef.current = animationYear
-    setAnimationYear(year)
+    prevYearRef.current = animationYear; setAnimationYear(year)
   }, [animationYear])
-
   const handleCountryHover = useCallback((data, pos) => {
-    setHoveredCountry(data)
-    setTooltipPos(pos)
+    setHoveredCountry(data); setTooltipPos(pos)
   }, [])
-
-  const handleCountryLeave = useCallback(() => {
-    setHoveredCountry(null)
-  }, [])
-
-  const totalCountries = Object.keys(countryData).length
-  const totalIncidents = Object.values(countryData).reduce((n, d) => n + d.incidents.length, 0)
+  const handleCountryLeave = useCallback(() => setHoveredCountry(null), [])
 
   return (
     <div className="app">
@@ -114,14 +95,22 @@ export default function App() {
           <h1 className="app-title">Empire's Reach</h1>
           <p className="app-subtitle">Foreign-backed coups, assassinations &amp; interventions · 1830–2024</p>
         </div>
-        <div className="header-stats">
-          <div className="stat">
-            <span className="stat-num">{totalCountries}</span>
-            <span className="stat-label">countries</span>
-          </div>
-          <div className="stat">
-            <span className="stat-num">{totalIncidents}</span>
-            <span className="stat-label">interventions</span>
+
+        <div className="header-right">
+          <PerpFlags perpCounts={perpCounts} />
+          <div className="header-stats">
+            <div className="stat">
+              <span className="stat-num">{Object.keys(countryData).length}</span>
+              <span className="stat-label">countries</span>
+            </div>
+            <div className="stat">
+              <span className="stat-num">{totalIncidents}</span>
+              <span className="stat-label">events</span>
+            </div>
+            <div className="stat">
+              <span className="stat-num">{perpNations}</span>
+              <span className="stat-label">perpetrators</span>
+            </div>
           </div>
         </div>
       </header>

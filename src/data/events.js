@@ -553,11 +553,13 @@ export const events = {
         year: 2011,
         title: "US, Gulf State, and NATO Support for Syrian Rebel Factions",
         leader: "Bashar al-Assad government",
-        perpetrators: ["United States (CIA Operation Timber Sycamore)", "Saudi Arabia", "Qatar", "Turkey"],
-        summary: "The CIA's Operation Timber Sycamore funneled billions of dollars in arms and training to Syrian rebel factions from 2012 onward, some of which ended up with jihadist groups including al-Nusra Front and elements that became ISIS. The program aimed to overthrow Assad. The resulting conflict has killed over 500,000 people and displaced over 13 million.",
+        perpetrators: ["United States (CIA Operation Timber Sycamore)", "Saudi Arabia", "Qatar", "Turkey", "Israel (1,000+ airstrikes 2013–present, support for southern rebel groups)"],
+        summary: "The CIA's Operation Timber Sycamore funneled billions of dollars in arms and training to Syrian rebel factions from 2012 onward, some ending up with al-Nusra Front and ISIS precursors. Simultaneously, Israel conducted over 1,000 documented airstrikes inside Syria from 2013 onward — targeting Iranian military infrastructure and Hezbollah weapons convoys — and provided arms, cash, and medical treatment to rebel groups controlling the Golan Heights buffer zone (the 'Good Neighbour Policy'). The Israeli strikes accelerated after Syria agreed to host Iranian forces. The overall conflict has killed over 500,000 people and displaced 13 million.",
         citations: [
           "New York Times, 'Arms Airlift to Syria Rebels Expands, With Aid From C.I.A.', March 24 2013",
           "Washington Post, 'CIA's covert program to train Syrian rebels cost $1 billion', Aug 2015",
+          "Wall Street Journal, 'Israel Gives Secret Aid to Syrian Rebels', June 18 2017",
+          "Times of Israel, 'IDF confirms it carried out hundreds of strikes in Syria', Sept 4 2018",
           "Seymour Hersh, 'The Red Line and the Rat Line', London Review of Books (2014)"
         ]
       }
@@ -963,6 +965,27 @@ export const events = {
           "Gibson, Richard M. & Chen Wen-hua. The Secret Army: Chiang Kai-shek and the Drug Warlords of the Golden Triangle (2011)",
           "Taylor, Robert. The State in Myanmar (2009)",
           "Lintner, Bertil. Burma in Revolt: Opium and Insurgency Since 1948 (1994)"
+        ]
+      }
+    ]
+  },
+
+  "422": {
+    country: "Lebanon",
+    incidents: [
+      {
+        year: 1982,
+        title: "Israeli Invasion & Sabra–Shatila Massacre",
+        leader: "Lebanese sovereignty / Palestinian refugee population",
+        perpetrators: ["Israel", "United States (US-supplied F-16s, cluster bombs; Marines deployed post-massacre)"],
+        summary: "In June 1982, Israel invaded Lebanon with 60,000 troops under Defense Minister Ariel Sharon, officially to destroy PLO bases. Israel also backed the installation of Phalangist leader Bashir Gemayel as Lebanese president. After Gemayel was assassinated in September 1982, Israeli forces encircled the Sabra and Shatila Palestinian refugee camps and — in coordination with IDF commanders — allowed Lebanese Phalangist militias to enter, conducting a three-day massacre of 700–3,500 civilians including women, children, and elderly. Israel's own Kahan Commission (1983) found Sharon 'personally responsible' for enabling the killings, forcing his resignation as Defense Minister. The US had supplied Israel the weapons used in the invasion and deployed Marines to Beirut in the aftermath. Israel occupied southern Lebanon until 2000.",
+        citations: [
+          "Kahan Commission Report (State of Israel, February 1983) — finds Sharon 'personally responsible'",
+          "Amnesty International. 'Report on the Mission to Lebanon' (1983)",
+          "Schiff, Ze'ev & Ya'ari, Ehud. Israel's Lebanon War (1984)",
+          "Chomsky, Noam. The Fateful Triangle: The United States, Israel and the Palestinians (1983)",
+          "UN Security Council Resolution 521 (1982) condemning the massacre",
+          "Human Rights Watch. 'Lebanon: Civilians Under Assault' (1983)"
         ]
       }
     ]
