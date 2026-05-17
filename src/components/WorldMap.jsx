@@ -46,49 +46,50 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                   const isNew = newlyAdded.has(id)
 
                   const countryName = COUNTRY_NAMES[geo.id] || `Country ${geo.id}`
+                  const handleMouseEnter = (e) => {
+                    setHoveredGeoId(id)
+                    if (data) onCountryHover(data, { x: e.clientX, y: e.clientY })
+                  }
+                  const handleMouseMove = (e) => {
+                    if (data) onCountryHover(data, { x: e.clientX, y: e.clientY })
+                  }
+                  const handleMouseLeave = () => {
+                    setHoveredGeoId(null)
+                    onCountryLeave()
+                  }
+                  const handleClick = () => {
+                    if (data) {
+                      onCountryClick(data)
+                    } else {
+                      onCountryClick(null)
+                    }
+                  }
+
                   return (
-                    <Geography
-                      key={geo.rsmKey}
-                      geography={geo}
-                      title={countryName}
-                      onMouseEnter={(e) => {
-                        setHoveredGeoId(id)
-                        if (data) onCountryHover(data, { x: e.clientX, y: e.clientY })
-                      }}
-                      onMouseMove={(e) => {
-                        if (data) onCountryHover(data, { x: e.clientX, y: e.clientY })
-                      }}
-                      onMouseLeave={() => {
-                        setHoveredGeoId(null)
-                        onCountryLeave()
-                      }}
-                      onClick={() => {
-                        if (data) {
-                          onCountryClick(data)
-                        } else {
-                          // Click on grey country or ocean closes detail panel
-                          onCountryClick(null)
-                        }
-                      }}
-                      style={{
-                        default: {
-                          fill: getCountryColor(count, isNew),
-                          stroke: '#0d1117',
-                          strokeWidth: 0.5,
-                          outline: 'none',
-                          transition: 'fill 0.4s ease',
-                        },
-                        hover: {
-                          fill: count > 0 ? '#ef5350' : '#2d3a4a',
-                          stroke: count > 0 ? '#ff8a80' : '#3d4e60',
-                          strokeWidth: count > 0 ? 1 : 0.6,
-                          outline: 'none',
-                          cursor: count > 0 ? 'pointer' : 'default',
-                          transition: 'fill 0.15s ease',
-                        },
-                        pressed: { fill: '#ef5350', outline: 'none' },
-                      }}
-                    />
+                    <g key={geo.rsmKey} onMouseEnter={handleMouseEnter} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} onClick={handleClick}>
+                      <title>{countryName}</title>
+                      <Geography
+                        geography={geo}
+                        style={{
+                          default: {
+                            fill: getCountryColor(count, isNew),
+                            stroke: '#0d1117',
+                            strokeWidth: 0.5,
+                            outline: 'none',
+                            transition: 'fill 0.4s ease',
+                          },
+                          hover: {
+                            fill: count > 0 ? '#ef5350' : '#2d3a4a',
+                            stroke: count > 0 ? '#ff8a80' : '#3d4e60',
+                            strokeWidth: count > 0 ? 1 : 0.6,
+                            outline: 'none',
+                            cursor: count > 0 ? 'pointer' : 'default',
+                            transition: 'fill 0.15s ease',
+                          },
+                          pressed: { fill: '#ef5350', outline: 'none' },
+                        }}
+                      />
+                    </g>
                   )
                 })}
 
