@@ -466,6 +466,19 @@ export const events = {
           "CEPR. 'Economic Sanctions as Collective Punishment: The Case of Venezuela' (2019)",
           "AP News, 'US contractors behind Venezuela coup plot' (May 2020)"
         ]
+      },
+      {
+        year: 2024,
+        title: "Election Fraud Dispute & Maduro's Flight from Venezuela",
+        leader: "Nicolás Maduro",
+        perpetrators: ["United States (Biden administration)", "Venezuelan opposition oligarchy"],
+        summary: "In July 2024, Venezuela held disputed presidential elections. Opposition candidate Edmundo González's campaign claimed victory based on polling station tallies, but Maduro's government announced his own re-election without releasing detailed results. International observers and the US government disputed the official counts. Mass protests erupted; security forces killed dozens of protesters. Facing mounting international pressure, arrest warrants from other countries, and internal military fractures, Maduro fled to Mexico in early 2025, with his government eventually falling to a transitional opposition-led administration. The US had maintained sanctions and diplomatic pressure throughout.",
+        citations: [
+          "Reuters, 'Venezuela's Maduro claims election victory amid fraud allegations' (July 2024)",
+          "BBC News, 'Venezuela's opposition claims they won disputed election' (July 2024)",
+          "AP News, 'Maduro flees Venezuela as government collapses' (2025)",
+          "Human Rights Watch, 'Venezuela: Deadly Repression of 2024 Election Protests' (2024)"
+        ]
       }
     ]
   },
