@@ -122,8 +122,14 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
 
   const { zoom } = position
 
+  const handleMapClick = (e) => {
+    // Close detail panel on click anywhere in the map wrapper
+    // Country clicks call stopPropagation to prevent this from firing
+    onCountryClick(null)
+  }
+
   return (
-    <div className="map-wrapper">
+    <div className="map-wrapper" onClick={handleMapClick}>
       <ComposableMap
         projection="geoMercator"
         projectionConfig={{ scale: 140, center: [0, 20] }}
@@ -136,7 +142,6 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
           minZoom={1}
           maxZoom={8}
         >
-          <rect x="-180" y="-90" width="360" height="180" fill="transparent" onClick={() => onCountryClick(null)} />
           <Geographies geography={GEO_URL}>
             {({ geographies }) => (
               <>
