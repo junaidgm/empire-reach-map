@@ -50,24 +50,28 @@ export default function Tooltip({ country, position }) {
 
   return (
     <div className="tooltip-hover" style={style}>
-      <div className="th-country">{country.country}</div>
-      <div className="th-incidents-list">
+      <div className="th-title-bar">{country.country}</div>
+      <div className="th-incidents-table">
         {country.incidents.map((inc, i) => {
           const perps = parsePerpetrators(inc.perpetrators)
-          const flags = perps.map(k => PERP_META[k]?.flag).filter(Boolean).join(' ')
+          const flags = perps.map(k => PERP_META[k]?.flag).filter(Boolean).join('')
           const act = extractAct(inc.title, inc.summary)
           const reason = extractReason(inc.summary)
           return (
-            <div key={i} className="th-incident-block">
-              <div className="th-act-year">{inc.year}</div>
-              <div className="th-act-flags">{flags}</div>
-              <div className="th-act-text">{act}</div>
-              {reason && <div className="th-act-reason">{reason}</div>}
+            <div key={i} className="th-card">
+              <div className="th-card-header">
+                <span className="th-card-year">{inc.year}</span>
+                <span className="th-card-flags">{flags}</span>
+              </div>
+              <div className="th-card-body">
+                <div className="th-card-act">{act}</div>
+                {reason && <div className="th-card-reason">💡 {reason}</div>}
+              </div>
             </div>
           )
         })}
       </div>
-      <div className="th-hint">Click for full details →</div>
+      <div className="th-footer">→ Click for full details</div>
     </div>
   )
 }

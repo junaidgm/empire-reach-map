@@ -45,10 +45,12 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                   const count = data ? data.incidents.length : 0
                   const isNew = newlyAdded.has(id)
 
+                  const countryName = COUNTRY_NAMES[geo.id] || `Country ${geo.id}`
                   return (
                     <Geography
                       key={geo.rsmKey}
                       geography={geo}
+                      title={countryName}
                       onMouseEnter={(e) => {
                         setHoveredGeoId(id)
                         if (data) onCountryHover(data, { x: e.clientX, y: e.clientY })
