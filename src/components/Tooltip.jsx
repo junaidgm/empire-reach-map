@@ -24,14 +24,16 @@ export default function Tooltip({ country, position }) {
       const action = title.split(' — ')[1]
       return action.length > 60 ? action.slice(0, 57) + '…' : action
     }
-    // Otherwise, extract first compelling phrase from summary
-    const phrases = [
-      /assassinated|murdered|killed|overthrown|ousted|arrested|executed/i,
-      /regime change|coup|intervention|invasion|deposed/i
+    // Search for key action verbs (more specific to avoid false positives like "executed orders")
+    const patterns = [
+      { regex: /was assassinated|was murdered|was killed/i, text: 'assassinated' },
+      { regex: /was overthrown|was ousted|was deposed/i, text: 'ousted' },
+      { regex: /was arrested|imprisoned|disqualified/i, text: 'arrested' },
+      { regex: /regime change|military coup|coup d'état/i, text: 'coup' },
+      { regex: /intervention|invasion|occupation/i, text: 'intervention' }
     ]
-    for (const phrase of phrases) {
-      const match = summary.match(phrase)
-      if (match) return match[0].toLowerCase()
+    for (const { regex, text } of patterns) {
+      if (regex.test(summary)) return text
     }
     return 'Intervention'
   }

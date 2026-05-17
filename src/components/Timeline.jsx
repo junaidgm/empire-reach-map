@@ -83,7 +83,7 @@ export default function Timeline({
 
       {viewMode !== 'timeline' && (
         <div className="timeline-hint">
-          Showing all documented interventions 1830–2024. Click "View Timeline" to animate chronologically.
+          Showing all documented interventions 1830–2026. Click "View Timeline" to animate chronologically.
         </div>
       )}
     </div>

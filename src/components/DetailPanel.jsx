@@ -1,6 +1,8 @@
 export default function DetailPanel({ country, onClose }) {
   if (!country) return null
 
+  const isUrl = (str) => /^https?:\/\//.test(str)
+
   return (
     <div className="detail-panel">
       <div className="dp-header">
@@ -9,38 +11,53 @@ export default function DetailPanel({ country, onClose }) {
       </div>
 
       <div className="dp-scroll">
-        {country.incidents.map((inc, i) => (
-          <div key={i} className="dp-incident">
-            <div className="dp-year-row">
-              <span className="dp-year">{inc.year}</span>
-              <span className="dp-title">{inc.title}</span>
-            </div>
+        <div className="dp-timeline">
+          {country.incidents.map((inc, i) => (
+            <div key={i} className="dp-timeline-item">
+              <div className="dp-timeline-dot"></div>
+              {i < country.incidents.length - 1 && <div className="dp-timeline-line"></div>}
 
-            <div className="dp-badges">
-              {inc.perpetrators.map((p, j) => (
-                <span key={j} className="perp-badge">{p}</span>
-              ))}
-            </div>
+              <div className="dp-incident">
+                <div className="dp-year">{inc.year}</div>
+                <div className="dp-title">{inc.title}</div>
 
-            {inc.leader && (
-              <div className="dp-leader">
-                <span className="dp-label">Target: </span>{inc.leader}
+                <div className="dp-badges">
+                  {inc.perpetrators.map((p, j) => (
+                    <span key={j} className="perp-badge">{p}</span>
+                  ))}
+                </div>
+
+                {inc.leader && (
+                  <div className="dp-leader">
+                    <strong>Target:</strong> {inc.leader}
+                  </div>
+                )}
+
+                <ul className="dp-summary">
+                  {inc.summary
+                    .split(/\.\s+/)
+                    .filter(s => s.trim())
+                    .slice(0, 4)
+                    .map((sentence, j) => (
+                      <li key={j}>{sentence.trim()}.</li>
+                    ))}
+                </ul>
+
+                <div className="dp-citations">
+                  {inc.citations.map((c, j) => (
+                    <div key={j} className="citation">
+                      {isUrl(c) ? (
+                        <a href={c} target="_blank" rel="noopener noreferrer">{c}</a>
+                      ) : (
+                        <span>{c}</span>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            )}
-
-            <p className="dp-summary">{inc.summary}</p>
-
-            <div className="dp-citations">
-              {inc.citations.map((c, j) => (
-                <div key={j} className="citation">— {c}</div>
-              ))}
             </div>
-
-            {i < country.incidents.length - 1 && (
-              <div className="dp-divider" />
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   )

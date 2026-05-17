@@ -9,7 +9,7 @@ import { computePerpCounts, parsePerpetrators } from './utils/perpetrators'
 import './App.css'
 
 const MIN_YEAR = 1830
-const MAX_YEAR = 2024
+const MAX_YEAR = 2026
 
 export default function App() {
   const [viewMode, setViewMode] = useState('all')
@@ -128,7 +128,7 @@ export default function App() {
       <header className="app-header">
         <div className="header-left">
           <h1 className="app-title">Empire's Reach</h1>
-          <p className="app-subtitle">Foreign-backed coups, assassinations &amp; interventions · 1830–2024</p>
+          <p className="app-subtitle">Foreign-backed coups, assassinations &amp; interventions · 1830–2026</p>
         </div>
 
         <div className="header-right">
