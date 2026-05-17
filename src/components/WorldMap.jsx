@@ -7,7 +7,7 @@ const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json'
 
 // Fallback coordinates for countries where geoCentroid may fail [lon, lat]
 const FALLBACK_COORDS = {
-  4: [66, 34],      // Afghanistan
+  4: [67, 33],      // Afghanistan
   12: [2, 28],      // Algeria
   24: [-100, 37],   // Angola (check - might be wrong)
   32: [-63, -38],   // Argentina
@@ -199,7 +199,7 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                   const id = String(geo.id)
                   const data = countryData[id]
                   const isHovered = hoveredGeoId === id
-                  const name = COUNTRY_NAMES[geo.id]
+                  const name = COUNTRY_NAMES[parseInt(geo.id)]
                   if (!name) return null
 
                   // Show label if: has incidents (any zoom) OR hovered (any zoom) OR zoom >= 3
