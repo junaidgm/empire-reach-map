@@ -146,7 +146,7 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                   const count = data ? data.incidents.length : 0
                   const isNew = newlyAdded.has(id)
 
-                  const countryName = COUNTRY_NAMES[geo.id] || `Country ${geo.id}`
+                  const countryName = COUNTRY_NAMES[parseInt(geo.id)] || COUNTRY_NAMES[geo.id] || `Country ${geo.id}`
                   const handleMouseEnter = (e) => {
                     setHoveredGeoId(id)
                     if (data) onCountryHover(data, { x: e.clientX, y: e.clientY })
