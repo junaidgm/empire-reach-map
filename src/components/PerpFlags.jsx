@@ -21,7 +21,7 @@ export default function PerpFlags({ perpCounts, selectedPerps = new Set(), onTog
               key={key}
               className={`perp-flag-badge ${active ? 'active' : ''}`}
               onClick={() => onToggle(key)}
-              title={`${meta.label}: ${count} intervention${count !== 1 ? 's' : ''}${active ? ' — click to remove filter' : ' — click to filter'}`}
+              title={`${meta.label} (${count} incidents)${active ? ' — click to deselect' : ' — click to filter'}`}
             >
               <span className="perp-flag-emoji">{meta.flag}</span>
               <span className="perp-flag-count">{count}</span>

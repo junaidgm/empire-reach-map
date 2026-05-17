@@ -458,7 +458,7 @@ export const events = {
         year: 2019,
         title: "US Recognition of Guaidó & Regime-Change Campaign Against Maduro",
         leader: "Nicolás Maduro",
-        perpetrators: ["United States (Trump, then Biden administration)", "Colombia", "Brazil (Bolsonaro)"],
+        perpetrators: ["United States (Trump, then Biden administration)"],
         summary: "In January 2019 the Trump administration recognized opposition figure Juan Guaidó as Venezuela's 'interim president,' coordinating with dozens of allies to delegitimize elected President Nicolás Maduro. The US imposed sweeping oil sanctions that blocked Venezuela's access to its own overseas assets, seized $7 billion in CITGO holdings, and sanctioned the central bank — a deliberate economic strangulation to force regime change. In May 2020, Operation Gideon — a mercenary seaborne invasion involving US military contractors — attempted to capture or kill Maduro; the operation was organized by a US private security firm (Silvercorp) in contact with Guaidó's circle. The UN Special Rapporteur concluded US sanctions constituted an 'economic war' causing civilian deaths.",
         citations: [
           "UN Human Rights Council. 'Report of the Special Rapporteur on unilateral coercive measures' — Alfred de Zayas (2018)",

@@ -13,9 +13,7 @@ const PERP_PATTERNS = [
   { key: 'Portugal',     flag: '🇵🇹', label: 'Portugal',    patterns: ['Portugal', 'Portuguese'] },
   { key: 'Spain',        flag: '🇪🇸', label: 'Spain',       patterns: ['Spain', 'Spanish'] },
   { key: 'Australia',    flag: '🇦🇺', label: 'Australia',   patterns: ['Australian intelligence'] },
-  { key: 'Pakistan',     flag: '🇵🇰', label: 'Pakistan',    patterns: ['Pakistan (ISI)'] },
-  { key: 'Colombia',     flag: '🇨🇴', label: 'Colombia',    patterns: ['Colombia'] },
-  { key: 'Brazil',       flag: '🇧🇷', label: 'Brazil',      patterns: ['Brazil (Bolsonaro)'] },
+  { key: 'Pakistan',     flag: '🇵🇰', label: 'Pakistan',    patterns: ['Pakistan (ISI)', 'Pakistani (ISI)'] },
   { key: 'Italy',        flag: '🇮🇹', label: 'Italy',       patterns: ['Italy', 'Italian'] },
 ]
 
