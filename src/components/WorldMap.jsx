@@ -11,7 +11,7 @@ function getCountryColor(count, isNew) {
   return ['#c62828', '#8b0000', '#5c0000'][Math.min(count - 1, 2)]
 }
 
-export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCountryLeave }) {
+export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCountryLeave, onCountryClick }) {
   const [position, setPosition] = useState({ coordinates: [0, 20], zoom: 1 })
   const [hoveredGeoId, setHoveredGeoId] = useState(null)
 
@@ -20,8 +20,6 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
   }, [])
 
   const { zoom } = position
-  // labels appear when zoom ≥ 3 (faded) or on hover (full opacity for any country)
-  const labelThreshold = 3
 
   return (
     <div className="map-wrapper">
@@ -40,7 +38,7 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
           <Geographies geography={GEO_URL}>
             {({ geographies }) => (
               <>
-                {/* Layer 1: country shapes */}
+                {/* Layer 1: shapes */}
                 {geographies.map((geo) => {
                   const id = String(geo.id)
                   const data = countryData[id]
@@ -62,6 +60,9 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                         setHoveredGeoId(null)
                         onCountryLeave()
                       }}
+                      onClick={() => {
+                        if (data) onCountryClick(data)
+                      }}
                       style={{
                         default: {
                           fill: getCountryColor(count, isNew),
@@ -75,7 +76,7 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                           stroke: count > 0 ? '#ff8a80' : '#3d4e60',
                           strokeWidth: count > 0 ? 1 : 0.6,
                           outline: 'none',
-                          cursor: 'pointer',
+                          cursor: count > 0 ? 'pointer' : 'default',
                           transition: 'fill 0.15s ease',
                         },
                         pressed: { fill: '#ef5350', outline: 'none' },
@@ -84,33 +85,23 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
                   )
                 })}
 
-                {/* Layer 2: country name labels */}
+                {/* Layer 2: name labels */}
                 {geographies.map((geo) => {
                   const id = String(geo.id)
                   const isHovered = hoveredGeoId === id
-                  const showFaded = zoom >= labelThreshold
-                  if (!isHovered && !showFaded) return null
-
+                  if (!isHovered && zoom < 3) return null
                   const name = COUNTRY_NAMES[geo.id]
                   if (!name) return null
 
-                  const centroid = geoCentroid(geo)
-                  // inverse-scale font so it stays readable regardless of zoom
-                  const fontSize = Math.max(1.8, 7 / zoom)
-                  const fill = isHovered
-                    ? '#ffffff'
-                    : 'rgba(180, 210, 235, 0.38)'
-                  const fontWeight = isHovered ? '700' : '400'
-
                   return (
-                    <Marker key={`lbl-${geo.id}`} coordinates={centroid}>
+                    <Marker key={`lbl-${geo.id}`} coordinates={geoCentroid(geo)}>
                       <text
                         textAnchor="middle"
                         dominantBaseline="middle"
-                        fontSize={fontSize}
+                        fontSize={Math.max(1.8, 7 / zoom)}
                         fontFamily="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-                        fontWeight={fontWeight}
-                        fill={fill}
+                        fontWeight={isHovered ? '700' : '400'}
+                        fill={isHovered ? '#ffffff' : 'rgba(180,210,235,0.38)'}
                         style={{ pointerEvents: 'none', userSelect: 'none' }}
                       >
                         {name}
@@ -125,18 +116,9 @@ export default function WorldMap({ countryData, newlyAdded, onCountryHover, onCo
       </ComposableMap>
 
       <div className="map-legend">
-        <div className="legend-item">
-          <span className="legend-dot" style={{ background: '#c62828' }} />
-          <span>1 intervention</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-dot" style={{ background: '#8b0000' }} />
-          <span>2 interventions</span>
-        </div>
-        <div className="legend-item">
-          <span className="legend-dot" style={{ background: '#5c0000' }} />
-          <span>3+ interventions</span>
-        </div>
+        <div className="legend-item"><span className="legend-dot" style={{ background: '#c62828' }} /><span>1 event</span></div>
+        <div className="legend-item"><span className="legend-dot" style={{ background: '#8b0000' }} /><span>2 events</span></div>
+        <div className="legend-item"><span className="legend-dot" style={{ background: '#5c0000' }} /><span>3+ events</span></div>
         <div className="legend-hint">Scroll to zoom · Drag to pan · Zoom 3× for labels</div>
       </div>
     </div>

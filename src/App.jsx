@@ -1,10 +1,11 @@
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import WorldMap from './components/WorldMap'
 import Tooltip from './components/Tooltip'
+import DetailPanel from './components/DetailPanel'
 import Timeline from './components/Timeline'
 import PerpFlags from './components/PerpFlags'
 import { events } from './data/events'
-import { computePerpCounts } from './utils/perpetrators'
+import { computePerpCounts, parsePerpetrators } from './utils/perpetrators'
 import './App.css'
 
 const MIN_YEAR = 1830
@@ -15,12 +16,22 @@ export default function App() {
   const [animationYear, setAnimationYear] = useState(MIN_YEAR)
   const [isPlaying, setIsPlaying] = useState(false)
   const [speed, setSpeed] = useState(2)
+
+  // hover tooltip
   const [hoveredCountry, setHoveredCountry] = useState(null)
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 })
+
+  // click → detail panel
+  const [detailCountry, setDetailCountry] = useState(null)
+
+  // perpetrator filter
+  const [selectedPerps, setSelectedPerps] = useState(new Set())
+
   const [newlyAdded, setNewlyAdded] = useState(new Set())
   const prevYearRef = useRef(MIN_YEAR)
   const intervalRef = useRef(null)
 
+  // base country data filtered by year
   const countryData = useMemo(() => {
     const cutoff = viewMode === 'timeline' ? animationYear : MAX_YEAR
     const result = {}
@@ -31,19 +42,32 @@ export default function App() {
     return result
   }, [viewMode, animationYear])
 
+  // filtered by selected perpetrators
+  const filteredCountryData = useMemo(() => {
+    if (selectedPerps.size === 0) return countryData
+    const result = {}
+    Object.entries(countryData).forEach(([id, data]) => {
+      const match = data.incidents.some(inc =>
+        parsePerpetrators(inc.perpetrators).some(k => selectedPerps.has(k))
+      )
+      if (match) result[id] = data
+    })
+    return result
+  }, [countryData, selectedPerps])
+
   const perpCounts = useMemo(() => computePerpCounts(countryData), [countryData])
   const perpNations = Object.keys(perpCounts).length
-  const totalIncidents = Object.values(countryData).reduce((n, d) => n + d.incidents.length, 0)
+  const totalIncidents = Object.values(filteredCountryData).reduce((n, d) => n + d.incidents.length, 0)
+  const totalCountries = Object.keys(filteredCountryData).length
 
-  // Flash newly-appearing countries during timeline
+  // flash new countries during timeline
   useEffect(() => {
     if (viewMode !== 'timeline') return
     const prev = prevYearRef.current
     const newIds = new Set()
     Object.entries(events).forEach(([id, data]) => {
-      const wasVisible = data.incidents.some(i => i.year <= prev)
-      const isVisible = data.incidents.some(i => i.year <= animationYear)
-      if (!wasVisible && isVisible) newIds.add(id)
+      if (!data.incidents.some(i => i.year <= prev) && data.incidents.some(i => i.year <= animationYear))
+        newIds.add(id)
     })
     prevYearRef.current = animationYear
     if (newIds.size > 0) {
@@ -65,12 +89,9 @@ export default function App() {
 
   const handlePlay = useCallback(() => {
     if (viewMode !== 'timeline') {
-      setViewMode('timeline')
-      setAnimationYear(MIN_YEAR)
-      prevYearRef.current = MIN_YEAR
+      setViewMode('timeline'); setAnimationYear(MIN_YEAR); prevYearRef.current = MIN_YEAR
     } else if (animationYear >= MAX_YEAR) {
-      setAnimationYear(MIN_YEAR)
-      prevYearRef.current = MIN_YEAR
+      setAnimationYear(MIN_YEAR); prevYearRef.current = MIN_YEAR
     }
     setIsPlaying(true)
   }, [viewMode, animationYear])
@@ -83,10 +104,24 @@ export default function App() {
   const handleYearChange = useCallback((year) => {
     prevYearRef.current = animationYear; setAnimationYear(year)
   }, [animationYear])
+
   const handleCountryHover = useCallback((data, pos) => {
     setHoveredCountry(data); setTooltipPos(pos)
   }, [])
   const handleCountryLeave = useCallback(() => setHoveredCountry(null), [])
+  const handleCountryClick = useCallback((data) => {
+    setDetailCountry(data)
+    setHoveredCountry(null)
+  }, [])
+
+  const handleFlagToggle = useCallback((key) => {
+    if (key === null) { setSelectedPerps(new Set()); return }
+    setSelectedPerps(prev => {
+      const next = new Set(prev)
+      next.has(key) ? next.delete(key) : next.add(key)
+      return next
+    })
+  }, [])
 
   return (
     <div className="app">
@@ -97,19 +132,26 @@ export default function App() {
         </div>
 
         <div className="header-right">
-          <PerpFlags perpCounts={perpCounts} />
+          <div className="perp-block">
+            <PerpFlags
+              perpCounts={perpCounts}
+              selectedPerps={selectedPerps}
+              onToggle={handleFlagToggle}
+            />
+            <div className="stat stat-perp">
+              <span className="stat-num">{perpNations}</span>
+              <span className="stat-label">perpetrators</span>
+            </div>
+          </div>
+          <div className="header-divider" />
           <div className="header-stats">
             <div className="stat">
-              <span className="stat-num">{Object.keys(countryData).length}</span>
+              <span className="stat-num">{totalCountries}</span>
               <span className="stat-label">countries</span>
             </div>
             <div className="stat">
               <span className="stat-num">{totalIncidents}</span>
               <span className="stat-label">events</span>
-            </div>
-            <div className="stat">
-              <span className="stat-num">{perpNations}</span>
-              <span className="stat-label">perpetrators</span>
             </div>
           </div>
         </div>
@@ -117,13 +159,17 @@ export default function App() {
 
       <main className="map-container">
         <WorldMap
-          countryData={countryData}
+          countryData={filteredCountryData}
           newlyAdded={newlyAdded}
           onCountryHover={handleCountryHover}
           onCountryLeave={handleCountryLeave}
+          onCountryClick={handleCountryClick}
         />
-        {hoveredCountry && (
+        {hoveredCountry && !detailCountry && (
           <Tooltip country={hoveredCountry} position={tooltipPos} />
+        )}
+        {detailCountry && (
+          <DetailPanel country={detailCountry} onClose={() => setDetailCountry(null)} />
         )}
       </main>
 
